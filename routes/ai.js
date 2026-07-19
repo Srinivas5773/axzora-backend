@@ -80,7 +80,7 @@ router.post('/generate-cover-letter', async (req, res) => {
           content: prompt
         }
       ],
-      model: 'llama3-8b-8192',
+      model: 'llama3-70b-8192',
       temperature: 0.7,
       max_tokens: 1000,
     });

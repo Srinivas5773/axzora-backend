@@ -10,7 +10,11 @@ const groq = new Groq({
 router.post('/ai-answer', async (req, res) => {
   const { question, jobId, email } = req.body;
   
+  console.log('AI Answer Request:', { question, jobId, email });
+  console.log('Groq API Key present:', !!process.env.GROQ_API_KEY);
+  
   if (!process.env.GROQ_API_KEY) {
+    console.error('Groq API key not configured');
     return res.status(500).json({
       success: false,
       answer: 'Groq API key not configured'
@@ -29,22 +33,24 @@ router.post('/ai-answer', async (req, res) => {
           content: question
         }
       ],
-      model: 'llama3-8b-8192',
+      model: 'llama3-70b-8192',
       temperature: 0.7,
       max_tokens: 500,
     });
     
     const answer = chatCompletion.choices[0]?.message?.content || 'No answer generated';
+    console.log('AI Answer generated successfully');
     
     res.json({
       success: true,
       answer
     });
   } catch (error) {
-    console.error('Groq API error:', error);
+    console.error('Groq API error:', error.message);
+    console.error('Full error:', error);
     res.status(500).json({
       success: false,
-      answer: 'Failed to generate AI answer'
+      answer: `Failed to generate AI answer: ${error.message}`
     });
   }
 });
